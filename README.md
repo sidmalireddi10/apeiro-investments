@@ -13,35 +13,22 @@ graph TD
     classDef output fill:#e17055,stroke:#000,stroke-width:2px,color:#fff
     classDef distribution fill:#00b894,stroke:#000,stroke-width:2px,color:#fff
 
-    subgraph INGESTION ["1. Data Ingestion (Swiss Sweep)"]
-        RSS[RSS Feeds]:::ingestion --> DB[(SQLite news.db)]:::ingestion
-        NAPI[NewsAPI Multi-Sweep]:::ingestion --> DB
-        MDC[Macro Data Connectors]:::ingestion --> DB
-    end
+    RSS[RSS Feeds]:::ingestion --> DB[(SQLite news.db)]:::ingestion
+    NAPI[NewsAPI Multi-Sweep]:::ingestion --> DB
+    MDC[Macro Data Connectors]:::ingestion --> DB
 
-    subgraph PROCESSING ["2. Forensic AI Processing"]
-        DB --> AI[GPT-4o Forensic Analysis]:::processing
-        AI --> SENT[Sentiment Scoring]:::processing
-        AI --> TRAD[Trade Idea Generation]:::processing
-    end
+    DB --> AI[GPT-4o Forensic Analysis]:::processing
+    AI --> SENT[Sentiment Scoring]:::processing
+    AI --> TRAD[Trade Idea Generation]:::processing
 
-    subgraph OUTPUT ["3. Premium Intelligence Output"]
-        SENT --> PDF[ReportLab PDF Engine]:::output
-        TRAD --> PDF
-        PDF --> REPORT[Morning Brief PDF]:::output
-    end
+    SENT --> PDF[ReportLab PDF Engine]:::output
+    TRAD --> PDF
+    PDF --> REPORT[Morning Brief PDF]:::output
 
-    subgraph DISTRIBUTION ["4. Distribution"]
-        REPORT --> GMAIL[Gmail HTTP API]:::distribution
-        GMAIL --> EMAIL(Portfolio Managers):::distribution
-    end
-
-    %% Global adjustments
-    style INGESTION fill:#f1f2f6,stroke:#2d3436,stroke-width:2px,stroke-dasharray: 5 5
-    style PROCESSING fill:#f1f2f6,stroke:#6c5ce7,stroke-width:2px,stroke-dasharray: 5 5
-    style OUTPUT fill:#f1f2f6,stroke:#e17055,stroke-width:2px,stroke-dasharray: 5 5
-    style DISTRIBUTION fill:#f1f2f6,stroke:#00b894,stroke-width:2px,stroke-dasharray: 5 5
+    REPORT --> GMAIL[Gmail HTTP API]:::distribution
+    GMAIL --> EMAIL(Portfolio Managers)::::distribution
 ```
+
 
 
 The project is orchestrated via a modular pipeline that ensures data integrity and forensic deduplication.
