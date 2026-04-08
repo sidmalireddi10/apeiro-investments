@@ -19,9 +19,10 @@ FRED_API_KEY: str = os.getenv("FRED_API_KEY", "")
 FINNHUB_API_KEY: str = os.getenv("FINNHUB_API_KEY", "")
 
 # ── Recipients (Institutional Distribution List) ────────────────────────────
-RECIPIENTS: list = [
-    "sidmalireddi10@gmail.com",
-]
+# Loaded from .env as a comma-separated string
+RECIPIENTS_STR: str = os.getenv("RECIPIENTS", "")
+RECIPIENTS: list = [email.strip() for email in RECIPIENTS_STR.split(",") if email.strip()]
+
 
 # ── AI Backend (OpenAI SDK → GitHub Copilot inference via Azure) ────────────────
 GITHUB_AI_BASE_URL: str = "https://models.inference.ai.azure.com"

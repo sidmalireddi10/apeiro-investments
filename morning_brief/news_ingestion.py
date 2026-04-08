@@ -131,8 +131,9 @@ def fetch_newsapi(conn: sqlite3.Connection) -> int:
     total_new = 0
 
     for sector, keywords in SECTORS.items():
-        # Split keywords into chunks of 5 for optimal NewsAPI balance
-        keyword_chunks: List[List[str]] = [keywords[i:i + 5] for i in range(0, len(keywords), 5)]
+        # Consolidated Chunks: Group 12 keywords together to reduce total API calls.
+        # This prevents hitting the 100/day limit during testing.
+        keyword_chunks: List[List[str]] = [keywords[i:i + 12] for i in range(0, len(keywords), 12)]
         
         for i, chunk in enumerate(keyword_chunks):
             query = " OR ".join(f'"{kw}"' if " " in kw else kw for kw in chunk)
@@ -142,11 +143,17 @@ def fetch_newsapi(conn: sqlite3.Connection) -> int:
                 "from": since,
                 "sortBy": "publishedAt",
                 "language": "en",
-                "pageSize": 20, # Fetch top 20 for EACH sweep chunk
+                "pageSize": 25, 
                 "apiKey": api_key,
             }
             try:
                 resp = requests.get(NEWSAPI_BASE_URL, params=params, timeout=15)
+                
+                # Check for 429 specifically to provide better guidance
+                if resp.status_code == 429:
+                    logger.warning(f"[NewsAPI] Rate limit hit for {sector}. Skipping remaining sweeps to preserve credits.")
+                    return total_new
+
                 resp.raise_for_status()
                 data = resp.json()
                 articles = data.get("articles", [])
@@ -166,7 +173,7 @@ def fetch_newsapi(conn: sqlite3.Connection) -> int:
                     total_new += 1
                 
                 logger.info(f"[NewsAPI] Sweep {i+1} for {sector}: Found {chunk_new} new articles.")
-                time.sleep(1.0) # Polite to API rate limits
+                time.sleep(2.0) # Polite delay to avoid burst limits
                 
             except Exception as exc:
                 logger.error(f"[NewsAPI] Sweep {i+1} failed for {sector}: {exc}")
