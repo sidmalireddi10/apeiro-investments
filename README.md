@@ -8,32 +8,41 @@ Built for senior portfolio managers and tactical traders, the system generates p
 
 ```mermaid
 graph TD
-    subgraph "1. Data Ingestion (Swiss Sweep)"
-        RSS[RSS Feeds] --> DB[(SQLite news.db)]
-        NAPI[NewsAPI Multi-Sweep] --> DB
-        MDC[Macro Data Connectors] --> DB
+    classDef ingestion fill:#2d3436,stroke:#000,stroke-width:2px,color:#fff
+    classDef processing fill:#6c5ce7,stroke:#000,stroke-width:2px,color:#fff
+    classDef output fill:#e17055,stroke:#000,stroke-width:2px,color:#fff
+    classDef distribution fill:#00b894,stroke:#000,stroke-width:2px,color:#fff
+
+    subgraph INGESTION ["1. Data Ingestion (Swiss Sweep)"]
+        RSS[RSS Feeds]:::ingestion --> DB[(SQLite news.db)]:::ingestion
+        NAPI[NewsAPI Multi-Sweep]:::ingestion --> DB
+        MDC[Macro Data Connectors]:::ingestion --> DB
     end
 
-    subgraph "2. Forensic AI Processing"
-        DB --> AI[GPT-4o Forensic Analysis]
-        AI --> SENT[Sentiment Scoring]
-        AI --> TRAD[Trade Idea Generation]
+    subgraph PROCESSING ["2. Forensic AI Processing"]
+        DB --> AI[GPT-4o Forensic Analysis]:::processing
+        AI --> SENT[Sentiment Scoring]:::processing
+        AI --> TRAD[Trade Idea Generation]:::processing
     end
 
-    subgraph "3. premium Intelligence Output"
-        SENT --> PDF[ReportLab PDF Engine]
+    subgraph OUTPUT ["3. Premium Intelligence Output"]
+        SENT --> PDF[ReportLab PDF Engine]:::output
         TRAD --> PDF
-        PDF --> REPORT[Morning Brief PDF]
+        PDF --> REPORT[Morning Brief PDF]:::output
     end
 
-    subgraph "4. Distribution"
-        REPORT --> GMAIL[Gmail HTTP API]
-        GMAIL --> EMAIL(Portfolio Managers)
+    subgraph DISTRIBUTION ["4. Distribution"]
+        REPORT --> GMAIL[Gmail HTTP API]:::distribution
+        GMAIL --> EMAIL(Portfolio Managers):::distribution
     end
 
-    style AI fill:#f9f,stroke:#333,stroke-width:2px
-    style REPORT fill:#bbf,stroke:#333,stroke-width:2px
+    %% Global adjustments
+    style INGESTION fill:#f1f2f6,stroke:#2d3436,stroke-width:2px,stroke-dasharray: 5 5
+    style PROCESSING fill:#f1f2f6,stroke:#6c5ce7,stroke-width:2px,stroke-dasharray: 5 5
+    style OUTPUT fill:#f1f2f6,stroke:#e17055,stroke-width:2px,stroke-dasharray: 5 5
+    style DISTRIBUTION fill:#f1f2f6,stroke:#00b894,stroke-width:2px,stroke-dasharray: 5 5
 ```
+
 
 The project is orchestrated via a modular pipeline that ensures data integrity and forensic deduplication.
 
@@ -44,7 +53,7 @@ The project is orchestrated via a modular pipeline that ensures data integrity a
 - **Self-Cleaning Database**: Persists signals in SQLite with automated deduplication to prevent analyst fatigue.
 
 ### 2. Forensic AI Analysis
-- **Hedge-Fund House View**: Leverages GPT-4o with an institutional-grade system prompt to generate normalized sentiment scores (+1 to -1).
+- **Hedge-Fund House View**: Leverages GPT-4o with an institutional-grade system prompt to generate normalized sentiment scores (0 to 100).
 - **Macro Integration**: Fuses raw news with hard market data (VIX, 10Y-2Y Spread, Sector ETFs) to ground the narrative.
 - **Trade Generation**: Produces high-conviction ideas with explicit entry rationales and invalidation points.
 
