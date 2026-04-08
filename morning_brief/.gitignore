@@ -1,0 +1,26 @@
+# Local environment variables
+.env
+
+# Google API credentials
+credentials.json
+token.json
+
+# Local database
+news.db
+
+# Generated reports
+output/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environments
+.venv
+venv/
+env/
+.env
+.venv
+.python-version
